@@ -1,0 +1,54 @@
+{
+  "name": "smartmeter-backend",
+  "version": "1.0.0",
+  "description": "Smart Energy Meter Backend - Node.js + Express + MQTT + MongoDB",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "billing:run": "node src/jobs/billingJob.js",
+    "seed": "node src/scripts/seedDatabase.js"
+  },
+  "keywords": [
+    "smart-meter",
+    "iot",
+    "mqtt",
+    "energy-monitoring",
+    "billing"
+  ],
+  "author": "Smart Meter Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "mqtt": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "express-rate-limit": "^7.0.0",
+    "joi": "^17.10.2",
+    "winston": "^3.10.0",
+    "pdfkit": "^0.13.0",
+    "nodemailer": "^6.9.6",
+    "node-cron": "^3.0.2",
+    "axios": "^1.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.50.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

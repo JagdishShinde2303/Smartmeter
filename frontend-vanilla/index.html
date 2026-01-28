@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Energy Meter Dashboard</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/charts.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>⚡ Smart Meter</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                    📊 Dashboard
+                </a>
+                <a href="#devices" class="nav-link" data-page="devices">
+                    📱 Devices
+                </a>
+                <a href="#billing" class="nav-link" data-page="billing">
+                    📄 Billing
+                </a>
+                <a href="#tariffs" class="nav-link" data-page="tariffs">
+                    ⚙️ Tariffs
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="header-right">
+                    <span id="userInfo">User</span>
+                    <span id="timeDisplay">--:--</span>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="dashboard" class="page active">
+                    <div class="section">
+                        <h2>Device Selection</h2>
+                        <select id="deviceSelect" class="form-control">
+                            <option value="">Select Device...</option>
+                        </select>
+                    </div>
+
+                    <!-- Live Telemetry Cards -->
+                    <div class="cards-grid">
+                        <div class="card">
+                            <h3>Voltage</h3>
+                            <p class="card-value" id="voltageValue">--</p>
+                            <span class="card-unit">V</span>
+                        </div>
+                        <div class="card">
+                            <h3>Current</h3>
+                            <p class="card-value" id="currentValue">--</p>
+                            <span class="card-unit">A</span>
+                        </div>
+                        <div class="card">
+                            <h3>Power</h3>
+                            <p class="card-value" id="powerValue">--</p>
+                            <span class="card-unit">W</span>
+                        </div>
+                        <div class="card">
+                            <h3>Energy</h3>
+                            <p class="card-value" id="energyValue">--</p>
+                            <span class="card-unit">kWh</span>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="section">
+                        <h2>Last 24 Hours Power Consumption</h2>
+                        <canvas id="powerChart"></canvas>
+                    </div>
+
+                    <div class="section">
+                        <h2>Daily Consumption (Last 30 Days)</h2>
+                        <canvas id="consumptionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Devices Page -->
+                <div id="devices" class="page">
+                    <div class="section">
+                        <h2>Manage Devices</h2>
+                        <button id="addDeviceBtn" class="btn btn-primary">+ Add Device</button>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Device ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Last Seen</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devicesTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Add Device Modal -->
+                    <div id="addDeviceModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h2>Add New Device</h2>
+                            <form id="addDeviceForm">
+                                <input type="text" id="deviceId" placeholder="Device ID" required>
+                                <input type="text" id="deviceName" placeholder="Device Name" required>
+                                <input type="text" id="deviceLocation" placeholder="Location" required>
+                                <button type="submit" class="btn btn-primary">Add Device</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Page -->
+                <div id="billing" class="page">
+                    <div class="section">
+                        <h2>Billing & Invoices</h2>
+                        <select id="billingDeviceSelect" class="form-control">
+                            <option value="">Select Device...</option>
+                        </select>
+                        <input type="month" id="billingMonth" class="form-control">
+                        <button id="computeBillBtn" class="btn btn-primary">Compute Bill</button>
+                    </div>
+
+                    <!-- Bill Summary -->
+                    <div id="billSummary" class="section" style="display:none;">
+                        <h3>Bill Summary</h3>
+                        <table class="bill-table">
+                            <tr>
+                                <td>Energy Consumed</td>
+                                <td id="billEnergy">--</td>
+                            </tr>
+                            <tr>
+                                <td>Subtotal (Slabs)</td>
+                                <td id="billSubtotal">--</td>
+                            </tr>
+                            <tr>
+                                <td>Fixed Charge</td>
+                                <td id="billFixed">--</td>
+                            </tr>
+                            <tr>
+                                <td>Tax (18%)</td>
+                                <td id="billTax">--</td>
+                            </tr>
+                            <tr class="bill-total">
+                                <td>Total</td>
+                                <td id="billTotal">--</td>
+                            </tr>
+                        </table>
+                        <button id="downloadPdfBtn" class="btn btn-primary">Download PDF</button>
+                    </div>
+
+                    <!-- Invoices List -->
+                    <div class="section">
+                        <h2>Invoice History</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Energy (kWh)</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoicesTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tariffs Page -->
+                <div id="tariffs" class="page">
+                    <div class="section">
+                        <h2>Tariff Configuration</h2>
+                        <button id="editTariffsBtn" class="btn btn-primary">Edit Tariffs</button>
+                    </div>
+
+                    <!-- Tariff Display -->
+                    <div id="tariffDisplay" class="section">
+                        <h3>Current Tariff Slabs</h3>
+                        <table class="table" id="tariffTable">
+                            <thead>
+                                <tr>
+                                    <th>Range (kWh)</th>
+                                    <th>Rate (₹/kWh)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tariffTableBody">
+                            </tbody>
+                        </table>
+                        <p>Fixed Charge: <strong id="fixedChargeDisplay">--</strong></p>
+                        <p>Tax Rate: <strong id="taxRateDisplay">--</strong></p>
+                    </div>
+
+                    <!-- Edit Tariff Modal -->
+                    <div id="editTariffModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h2>Edit Tariffs</h2>
+                            <form id="editTariffForm">
+                                <label>Slabs:</label>
+                                <div id="slabsContainer"></div>
+                                <button type="button" id="addSlabBtn" class="btn btn-secondary">+ Add Slab</button>
+
+                                <label>Fixed Charge (₹)</label>
+                                <input type="number" id="fixedCharge" step="0.01" required>
+
+                                <label>Tax Rate (%)</label>
+                                <input type="number" id="taxRate" step="0.01" required>
+
+                                <button type="submit" class="btn btn-primary">Save Tariffs</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- JavaScript Files -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
